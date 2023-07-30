@@ -1,0 +1,44 @@
+{
+  "id": "4165146",
+  "name": "ss",
+  "font_family": "element-icons",
+  "css_prefix_text": "el-icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "3538531",
+      "name": "stars",
+      "font_class": "stars",
+      "unicode": "ec7e",
+      "unicode_decimal": 60542
+    },
+    {
+      "icon_id": "35219687",
+      "name": "灵感",
+      "font_class": "linggan",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "1305482",
+      "name": "系统状态",
+      "font_class": "xitongzhuangtai",
+      "unicode": "e642",
+      "unicode_decimal": 58946
+    },
+    {
+      "icon_id": "6264949",
+      "name": "价格预测",
+      "font_class": "jiageyuce",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
+      "icon_id": "12280888",
+      "name": "税收预测",
+      "font_class": "shuishouyuce",
+      "unicode": "e635",
+      "unicode_decimal": 58933
+    }
+  ]
+}
