@@ -13,7 +13,7 @@
         <span></span>
       </div>
     </div>
-    <p>...智能助手小文正在飞速赶来...</p>
+    <p>...正在加急创作中...</p>
   </div>
 </template>
 
@@ -177,11 +177,11 @@ export default {};
   height: 15px;
 }
 .content p {
-  color: #bacbd9;
+  color: #000;
   font-size: 20px;
   z-index: 2;
   position: absolute;
-  bottom: 10px;
+  bottom: 0px;
   font-family: "Roboto Mono", monospace;
   animation: text 4s ease infinite;
   width: 400px;
@@ -189,27 +189,27 @@ export default {};
 }
 @keyframes text {
   0% {
-    transform: translateX(-30px);
+    transform: translateX(-20px);
     letter-spacing: 0px;
-    color: #bacbd9;
+    color: #000;
   }
   25% {
     letter-spacing: 3px;
-    color: #7ea1bf;
+    color: #000;
   }
   50% {
-    transform: translateX(30px);
+    transform: translateX(20px);
     letter-spacing: 0px;
-    color: #bacbd9;
+    color: #000;
   }
   75% {
     letter-spacing: 3px;
-    color: #7ea1bf;
+    color: #000;
   }
   100% {
-    transform: translateX(-30px);
+    transform: translateX(-20px);
     letter-spacing: 0px;
-    color: #bacbd9;
+    color: #000;
   }
 }
 </style>

@@ -8,7 +8,7 @@ import "tailwindcss/tailwind.css"
 // 加载 element 组件库的样式
 import 'element-ui/lib/theme-chalk/index.css'
 import 'element-ui/lib/theme-chalk/display.css';
-import "./assets/font_4165146_1gq1z9ylkot/iconfont.css"
+import "./assets/font_4165146_l9hicumxly/iconfont.css"
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false
 Vue.use(ElementUI)

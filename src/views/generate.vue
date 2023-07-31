@@ -154,10 +154,52 @@
     </div>
     <div
       v-if="isProcessing && !showResults"
-      class="form_container md:w-10/12 w-11/12 md:px-8 py-6 px-4 flex flex-col"
+      class="form_container_process md:w-10/12 w-11/12 md:px-8 pt-6 pb-4 px-4 flex flex-col"
     >
-      <div class="flex flex-row justify-between items-center mb-4">
-        <h3 class="tracking-wider">请详细描述您的艺术构想</h3>
+      <div class="flex flex-row justify-around items-center mb-4">
+        <div
+          class="w-1/2 h-full items-center leftdis flex flex-col justify-center"
+        >
+          <el-carousel
+            :autoplay="false"
+            indicator-position="outside"
+            style="width: 92.5%; margin-top: 1rem"
+            @change="onChange"
+          >
+            <el-carousel-item v-for="item in displayList" :key="item.key">
+              <img :src="item.src" style="width: 100%; height: 100%" />
+            </el-carousel-item>
+          </el-carousel>
+          <p class="font-medium tracking-wider mb-3" style="width: 92.5%">
+            {{ displayList[curIndex].text }}
+          </p>
+          <div style="width: 92.5%" class="pb-3">
+            <el-button
+              class="likebutton"
+              style="width: 100%"
+              v-if="!isLiked[curIndex]"
+              @click="likeit()"
+              ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
+              >喜欢</el-button
+            >
+            <el-button
+              class="liked"
+              type="text"
+              style="width: 100%"
+              v-if="isLiked[curIndex]"
+              @click="likeit()"
+              ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
+              >喜欢</el-button
+            >
+
+            <!-- <p class="flex justify-center" v-else>
+              <span class="liked mb-1"
+                ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
+                >喜欢</span
+              >
+            </p> -->
+          </div>
+        </div>
         <PlanetLoading></PlanetLoading>
       </div>
     </div>
@@ -183,6 +225,8 @@ export default {
       NumberOfStrokes: 8,
       flexibility: 80,
       advancedSet: false,
+      curIndex: 0,
+      isLiked: [false, false, false, false],
       styleDiy: "素描草图",
       styleList: [
         {
@@ -199,6 +243,28 @@ export default {
           value: require("../assets/oil.png"),
           label: "油画绘制",
           srcList: [require("../assets/oil.png")],
+        },
+      ],
+      displayList: [
+        {
+          src: require("../assets/oil.png"),
+          key: 1,
+          text: "Very detailed masterpiece painting of baby yoda holding a lightsaber",
+        },
+        {
+          src: require("../assets/sketch.png"),
+          key: 2,
+          text: "A fox is sitting on the sofa",
+        },
+        {
+          src: require("../assets/color.png"),
+          key: 3,
+          text: "Colorful hot air balloons high over the mountains",
+        },
+        {
+          src: require("../assets/oil.png"),
+          key: 4,
+          text: "A cute cat in the style of Pixar animations rides a bike",
         },
       ],
     };
@@ -282,7 +348,19 @@ export default {
       setTimeout(() => {
         this.isProcessing = !this.isProcessing;
       }, 500);
+      setTimeout(() => {
+        this.isProcessing = !this.isProcessing;
+        this.showResults = !this.showResults;
+      }, 2200);
       console.log(set);
+    },
+    onChange(curVal, oldVal) {
+      this.curIndex = curVal;
+      console.log(curVal, oldVal);
+    },
+    likeit() {
+      this.isLiked[this.curIndex] = true;
+      this.$forceUpdate();
     },
   },
 };
@@ -290,6 +368,18 @@ export default {
 <style lang="scss" scoped>
 .form_container {
   margin: 3% auto 0 auto;
+  // height: 95%;
+  box-shadow: 0 0 8px 0 rgba(29, 41, 83, 0.08),
+    0 1px 72px 0 rgba(4, 11, 53, 0.1);
+  border-radius: 0.75rem;
+  border-width: 1px;
+  --tw-border-opacity: 1;
+  border-color: rgba(231, 237, 251, var(--tw-border-opacity));
+  --tw-bg-opacity: 1;
+  background-color: rgba(233, 237, 243, var(--tw-bg-opacity));
+}
+.form_container_process {
+  margin: 2% auto 0 auto;
   // height: 95%;
   box-shadow: 0 0 8px 0 rgba(29, 41, 83, 0.08),
     0 1px 72px 0 rgba(4, 11, 53, 0.1);
@@ -385,5 +475,72 @@ export default {
     height: 0px;
     animation: shrink 0.5s 1 ease-out;
   }
+}
+.el-carousel__item h3 {
+  color: #475669;
+  font-size: 18px;
+  opacity: 0.75;
+  line-height: 300px;
+  margin: 0;
+}
+
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n + 1) {
+  background-color: #d3dce6;
+}
+/deep/ .el-carousel__button {
+  // 指示器按钮
+  width: 10px;
+  height: 10px;
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+/deep/ .is-active .el-carousel__button {
+  // 指示器激活按钮
+  background: #3f8ec8;
+}
+.leftdis {
+  --tw-shadow: 0px 3.7112px 13.917px rgba(0, 0, 0, 0.25);
+  --tw-shadow-colored: 0px 3.7112px 13.917px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  border-radius: 10px;
+  background: #fff;
+}
+.likebutton {
+  border: none;
+  color: #000;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  --tw-shadow: 0px 1px 10px rgba(5, 25, 51, 0.12);
+  --tw-shadow-colored: 0px 1px 10px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+.liked {
+  --color-1: #186cb8;
+  --color-2: #2a9a9f;
+  --color-3: #f1b211;
+  --color-4: #e83611;
+  --color-5: #f9002f;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  background: linear-gradient(
+    to right,
+    var(--color-1),
+    var(--color-2),
+    var(--color-3),
+    var(--color-4),
+    var(--color-5)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 </style>
