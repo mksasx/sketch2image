@@ -156,9 +156,9 @@
       v-if="isProcessing && !showResults"
       class="form_container_process md:w-10/12 w-11/12 md:px-8 pt-6 pb-4 px-4 flex flex-col"
     >
-      <div class="flex flex-row justify-around items-center mb-4">
+      <div class="flex flex-col md:flex-row justify-around items-center mb-4">
         <div
-          class="w-1/2 h-full items-center leftdis flex flex-col justify-center"
+          class="w-11/12 md:w-1/2 h-full items-center leftdis flex flex-col justify-center"
         >
           <el-carousel
             :autoplay="false"
@@ -203,31 +203,203 @@
         <PlanetLoading></PlanetLoading>
       </div>
     </div>
+    <div
+      v-if="!isProcessing && showResults"
+      class="form_container_process md:w-10/12 w-11/12 md:px-8 pt-6 pb-4 px-4 flex flex-col"
+    >
+      <div class="mb-3">
+        <el-page-header @back="goBack()" content="生成结果"> </el-page-header>
+      </div>
+      <div class="flex flex-row justify-between">
+        <el-input
+          placeholder="Macaw full color,ultra detailed,realistic,insanely beautiful"
+          v-model="textarea"
+          maxlength="200"
+          class="inputKuang"
+        >
+        </el-input>
+        <el-button
+          type="primary"
+          size="small"
+          style="font-size: 18px; font-weight: 500"
+          @click="generatePic()"
+          ><i class="el-icon-stars" style="font-size: 20px"></i
+          ><span class="hidden-sm-and-down" style="margin-left: 10px"
+            >立即开始艺术创作</span
+          >
+        </el-button>
+      </div>
+      <div class="flex justify-center">
+        <p
+          v-if="!advancedSet2"
+          class="mb-4 mt-4 text-center antialiased font-normal text-base leading-6 text-blue-500"
+        >
+          <span class="cursor-pointer" @click="advanceSet()"
+            >+ Advanced Settings</span
+          >
+        </p>
+      </div>
+      <div
+        v-show="advancedSet2"
+        class="flex flex-col md:flex-row md:justify-between mt-5 settings"
+        :class="advanced2 == false ? 'off' : 'on'"
+      >
+        <div
+          class="flex flex-row justify-between items-center indeSet"
+          style="width: 33%; padding-right: 20px"
+        >
+          <h3 class="tracking-wider">
+            <el-tooltip effect="dark" placement="top-start">
+              <div slot="content">
+                笔画数默认为8，最大为20，最小为2<br />超出范围将自动取最大或最小值
+              </div>
+              <i class="el-icon-info mr-1"></i> </el-tooltip
+            >自定义笔画数
+          </h3>
+          <el-input-number
+            v-model="NumberOfStrokes"
+            :min="2"
+            :max="20"
+            style="width: 55%"
+          ></el-input-number>
+        </div>
+        <div
+          class="flex flex-row justify-between items-center indeSet"
+          style="width: 33%; padding-right: 20px"
+        >
+          <h3 class="tracking-wider">
+            <el-tooltip effect="dark" placement="top-start">
+              <div slot="content">
+                自由度默认为80%，最大为100%，最小为10%<br />最多支持输入两位小数
+              </div>
+              <i class="el-icon-info mr-1"></i> </el-tooltip
+            >自定义自由度
+          </h3>
+          <el-input
+            v-model="flexibility"
+            @input="limitInput($event)"
+            style="width: 55%"
+          >
+            <i
+              slot="suffix"
+              style="
+                font-style: normal;
+                margin-right: 10px;
+                color: #000;
+                size: 15px;
+              "
+              >%</i
+            >
+          </el-input>
+        </div>
+        <div
+          class="flex flex-row justify-between items-center indeSet"
+          style="width: 33%; padding-right: 0px"
+        >
+          <h3 class="tracking-wider">
+            <el-tooltip effect="dark" placement="top-start">
+              <div slot="content">
+                可以自定义生成图片的风格<br />默认为随机风格
+              </div>
+              <i class="el-icon-info mr-1"></i> </el-tooltip
+            >自定义风格化
+          </h3>
+          <el-select v-model="styleDiy" placeholder="请选择" style="width: 55%">
+            <el-option
+              v-for="item in styleList"
+              :key="item.label"
+              :label="item.label"
+              :value="item.label"
+              ><el-image
+                class="option_img"
+                :src="item.value"
+                :preview-src-list="item.srcList"
+                fit="contain"
+                style="float: left; width: 60px; height: 45px"
+              ></el-image>
+              <span style="float: right; font-size: 16px">{{
+                item.label
+              }}</span>
+            </el-option></el-select
+          >
+        </div>
+      </div>
+      <div class="flex justify-center">
+        <p
+          v-if="advancedSet2"
+          class="mb-4 mt-4 text-center antialiased font-normal text-base duration-200 leading-6 text-gray-500"
+        >
+          <span class="cursor-pointer" @click="advanceSet()"
+            >- Hide Advanced Settings</span
+          >
+        </p>
+      </div>
+      <div class="flex flex-row flex-wrap justify-around w-full">
+        <div
+          class="flex flex-col w-full md:w-1/2 imageContainer"
+          v-for="item in resultList"
+          :key="item.label"
+        >
+          <el-image
+            :src="item.value"
+            :preview-src-list="item.srcList"
+            fit="cover"
+            style="width: 100%; height: 90%"
+            class="result_img"
+            lazy
+          ></el-image
+          ><el-image-viewer
+            class="image_viewer"
+            v-if="showViewer"
+            :on-close="closeViewer"
+            :url-list="srcList"
+          ></el-image-viewer>
+          <div class="flex mt-2 justify-between">
+            <el-button type="success" style="width: 47%" @click="preview(item)"
+              ><i class="el-icon-search mr-1"></i>放大预览</el-button
+            ><el-button
+              type="primary"
+              style="width: 47%"
+              @click="click_down_excel(item.value)"
+            >
+              <i class="el-icon-download mr-1"></i>下载图片</el-button
+            >
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
 import PlanetLoading from "@/components/PlanetLoading.vue";
 import loading1 from "../components/loading1.vue";
+// 导入组件
+import ElImageViewer from "element-ui/packages/image/src/image-viewer";
 
 export default {
   name: "generate",
   components: {
     loading1,
     PlanetLoading,
+    ElImageViewer,
   },
   data() {
     return {
       prompt: "",
       textarea: "",
       isProcessing: false,
-      showResults: false,
+      showResults: true,
       advanced: false,
+      advanced2: true,
       NumberOfStrokes: 8,
       flexibility: 80,
       advancedSet: false,
+      advancedSet2: true,
+      showViewer: false, // 显示查看器
       curIndex: 0,
       isLiked: [false, false, false, false],
       styleDiy: "素描草图",
+      srcList: [],
       styleList: [
         {
           value: require("../assets/sketch.png"),
@@ -238,6 +410,35 @@ export default {
           value: require("../assets/color.png"),
           label: "色彩丰富",
           srcList: [require("../assets/color.png")],
+        },
+        {
+          value: require("../assets/oil.png"),
+          label: "油画绘制",
+          srcList: [require("../assets/oil.png")],
+        },
+      ],
+      resultList: [
+        {
+          // value: require("../assets/sketch.png"),
+          value:
+            "https://fengru-pic.oss-cn-beijing.aliyuncs.com/00140634-e675-4a85-af2a-0ee4e434c7e2.png",
+          label: "素描草图",
+          srcList: [require("../assets/sketch.png")],
+        },
+        {
+          value: require("../assets/color.png"),
+          label: "色彩丰富",
+          srcList: [require("../assets/color.png")],
+        },
+        {
+          value: require("../assets/oil.png"),
+          label: "油画绘制",
+          srcList: [require("../assets/oil.png")],
+        },
+        {
+          value: require("../assets/oil.png"),
+          label: "油画绘制",
+          srcList: [require("../assets/oil.png")],
         },
         {
           value: require("../assets/oil.png"),
@@ -294,6 +495,14 @@ export default {
     },
     advanceSet() {
       this.advanced = !this.advanced;
+      this.advanced2 = !this.advanced2;
+      if (!this.advancedSet2) {
+        this.advancedSet2 = !this.advancedSet2;
+      } else {
+        setTimeout(() => {
+          this.advancedSet2 = !this.advancedSet2;
+        }, 500);
+      }
       if (!this.advancedSet) {
         this.advancedSet = !this.advancedSet;
       } else {
@@ -362,6 +571,42 @@ export default {
       this.isLiked[this.curIndex] = true;
       this.$forceUpdate();
     },
+    goBack() {
+      this.showResults = !this.showResults;
+    },
+    click_down_excel(url) {
+      console.log(url);
+      let dom = document.createElement("a");
+      dom.href = url;
+      // 提取出第一个点前的文字
+      let name = url.substring(5, url.indexOf("."));
+      // 提取出最后一个点后的文字
+      let suffix = url.substring(url.lastIndexOf(".") + 1);
+
+      dom.download = name + "." + suffix;
+      dom.style.display = "none"; // 隐藏a标签
+      document.body.appendChild(dom);
+      // 点击下载
+      dom.click();
+      document.body.removeChild(dom);
+    },
+    preview(val) {
+      // console.log(document.querySelectorAll(".result_img"));
+      // console.log(document.querySelectorAll(".result_img")[index].showViewer);
+      console.log(val);
+      this.srcList = val.srcList;
+      this.showViewer = true;
+      // document.querySelectorAll(".result_img")[index].clickHandler();
+    },
+    showImage(val) {
+      console.log(val);
+      this.srcList = val.srcList;
+      this.showViewer = true;
+    },
+    // 关闭查看器
+    closeViewer() {
+      this.showViewer = false;
+    },
   },
 };
 </script>
@@ -379,7 +624,7 @@ export default {
   background-color: rgba(233, 237, 243, var(--tw-bg-opacity));
 }
 .form_container_process {
-  margin: 2% auto 0 auto;
+  margin: 2% auto 35px auto;
   // height: 95%;
   box-shadow: 0 0 8px 0 rgba(29, 41, 83, 0.08),
     0 1px 72px 0 rgba(4, 11, 53, 0.1);
@@ -401,6 +646,22 @@ export default {
   display: flex;
   align-items: center;
 }
+:deep(.el-page-header__left) {
+  margin-right: 23px;
+}
+:deep(.el-page-header__content) {
+  font-size: 15px;
+  color: #303133;
+}
+:deep(.el-page-header__left::after) {
+  position: absolute;
+  width: 1px;
+  height: 16px;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #aab2c5;
+}
 .el-select-dropdown__item {
   height: 55px;
   display: flex;
@@ -415,6 +676,22 @@ export default {
 .settings {
   height: 0;
   overflow: hidden;
+}
+.inputKuang {
+  width: 78%;
+}
+.imageContainer {
+  height: 480px;
+}
+.imageContainer:nth-child(odd) {
+  padding: 10px 15px 25px 80px;
+} //奇数行
+
+.imageContainer:nth-child(even) {
+  padding: 10px 80px 25px 15px;
+}
+:deep(.el-image-viewer__mask) {
+  background: #0000007a;
 }
 @keyframes unfold {
   from {
@@ -444,6 +721,27 @@ export default {
 @media screen and (max-width: 768px) {
   .form_container {
     margin-top: 8%;
+  }
+  .inputKuang {
+    width: 78%;
+  }
+
+  .form_container_process {
+    margin: 35px auto 35px auto;
+    // height: 95%;
+  }
+  .imageContainer {
+    height: 380px;
+  }
+  .imageContainer:nth-child(0) {
+    padding: 15px 10px 5px 10px;
+  }
+  .imageContainer:nth-child(odd) {
+    padding: 0px 10px 15px 10px;
+  } //奇数行
+
+  .imageContainer:nth-child(even) {
+    padding: 0px 10px 15px 10px;
   }
   .indeSet {
     width: 100% !important;

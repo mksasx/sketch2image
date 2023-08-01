@@ -225,7 +225,7 @@ export default {
     go() {
       this.$router.push("/generate");
     },
-    
+
     getUpTime() {
       setInterval(() => {
         this.getTime();
@@ -374,6 +374,8 @@ body {
 .el-main {
   padding: 0 0 0 0;
   height: calc(100vh - 55px);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
