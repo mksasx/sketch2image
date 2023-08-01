@@ -9,12 +9,12 @@
             智能高效
           </p>
           <h1 class="sm:text-6xl font-semibold tracking-widest mb-5 text-4xl">
-            风力发电预测平台
+            文本生成手绘草图
           </h1>
-          <p class="text-2xl leading-normal mb-3 pb-1">
-            睿风 - 科技赋能风力发电
+          <p class="text-3xl leading-normal tracking-wider mb-3 pb-1">
+            DiffSketcher
           </p>
-          <el-button round type="primary" @click="$router.push('/main')">
+          <el-button round type="primary" @click="$router.push('/generate')">
             开始使用
           </el-button>
         </div>
@@ -32,32 +32,32 @@
               <h2
                 class="text-3xl sm:text-6xl font-bold leading-4 tracking-widest mb-7 sm:mb-10"
               >
-                实时数据
+                创新型算法
               </h2>
               <p
                 class="text-xl sm:text-3xl text-gray-500 mb-7 tracking-wider sm:mb-10"
               >
-                海量真实风力发电数据
+                海量真实高质量训练数据
               </p>
               <ul
                 class="list-none text-gray-500 mb-4 font-semibold text-sm tracking-wider sm:text-xl"
               >
-                <li class="leading-8">
-                  · 全球最大风电运营企业龙源电力提供数据支持
-                </li>
-                <li class="leading-8">
-                  · 为电网调度提供科学支撑 保障电力供需平衡
-                </li>
-                <li class="leading-8">· 促进以新能源为主体的电力体制改革</li>
+                <li class="leading-8">· 以大数据为基础的深度学习算法</li>
+                <li class="leading-8">· 基于预训练扩散模型</li>
+                <li class="leading-8">· 创新性拓展至手绘草图领域</li>
               </ul>
-              <el-button round type="primary" @click="$router.push('/main')">
+              <el-button
+                round
+                type="primary"
+                @click="$router.push('/generate')"
+              >
                 开始使用
               </el-button>
             </div>
             <div class="col-sm-7">
               <div>
                 <div class="embed-responsive embed-responsive-custom">
-                  <img src="../assets/bg2.jpg" />
+                  <img src="../assets/method.png" />
                 </div>
               </div>
             </div>
@@ -66,7 +66,7 @@
       </div>
     </section>
     <section
-      class="section-outer1 section-outer h-5/6 sm:h-screen text-center py-2 sm:text-left sm:py-0"
+      class="section-outer2 section-outer h-5/6 sm:h-screen text-center py-2 sm:text-left sm:py-0"
     >
       <div class="container2 py-2 sm:py-0 h-full">
         <div class="flex items-center justify-center h-full">
@@ -76,7 +76,7 @@
             <div class="col-sm-7 order-2 sm:order-1">
               <div>
                 <div class="embed-responsive embed-responsive-custom">
-                  <img src="../assets/second.jpg" />
+                  <img src="../assets/1.gif" />
                 </div>
               </div>
             </div>
@@ -84,21 +84,25 @@
               <h2
                 class="text-3xl sm:text-6xl font-bold leading-4 tracking-widest mb-7 sm:mb-10"
               >
-                滚动预测
+                人性化设计
               </h2>
               <p
                 class="text-xl sm:text-3xl text-gray-500 mb-7 tracking-wider sm:mb-10"
               >
-                可定制高准度预测模型
+                以人为本的智能交互
               </p>
               <ul
                 class="list-none text-gray-500 mb-4 font-semibold text-sm tracking-wider sm:text-xl"
               >
-                <li class="leading-8">· 深度学习网络融合时序模型</li>
-                <li class="leading-8">· 预测结果可视化展示</li>
+                <li class="leading-8">· 优化矢量化生成草图</li>
+                <li class="leading-8">· 高清展示与简便操作</li>
                 <li class="leading-8">· 多屏幕多尺寸响应式设计</li>
               </ul>
-              <el-button round type="primary" @click="$router.push('/main')">
+              <el-button
+                round
+                type="primary"
+                @click="$router.push('/generate')"
+              >
                 开始使用
               </el-button>
             </div>
@@ -106,23 +110,29 @@
         </div>
       </div>
     </section>
-    <section class="bottom-section py-8">
+    <section class="bottom-section pt-8 pb-4">
       <div class="py-lg-5 container2 text-center">
         <h2
-          class="sm:text-5xl text-3xl tracking-widest font-bold text-center text-white mb-4"
+          class="sm:text-4xl text-3xl tracking-widest font-bold text-center text-gray-50 mb-4"
         >
-          现在使用睿风
-          <br class="sm:hidden" />
-          开始智能预测
+          现在使用DiffSketcher
+          <div class="w-full mb-3"></div>
+          开始艺术创作之旅
         </h2>
-        <div class="text-red">
-          <el-button round type="primary" @click="$router.push('/main')">
+        <div class="text-red mb-4">
+          <el-button round type="primary" @click="$router.push('/generate')">
             开始使用
           </el-button>
         </div>
+        <div class="w-full text-gray-200">
+          © 2023 DiffSketcher&nbsp;&nbsp;&nbsp;&nbsp;北京航空航天大学
+        </div>
       </div>
     </section>
-    <el-divider content-position="center"> © 2023 睿风科技有限公司</el-divider>
+
+    <!-- <el-divider content-position="center">
+        © 2023 DiffSketcher&nbsp;&nbsp;&nbsp;&nbsp;北京航空航天大学</el-divider
+      > -->
   </div>
 </template>
 
@@ -158,7 +168,7 @@ export default {
   left: 0;
 }
 .text-container:after {
-  background-image: url("../assets/banner1.jpg");
+  background-image: url("../assets/dijian.jpg");
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -170,16 +180,23 @@ export default {
   left: 0;
   mask-image: linear-gradient(
     0deg,
-    rgba(226, 233, 255, 0.5),
-    rgba(226, 233, 255, 0.5)
+    rgba(255, 255, 255, 0.5),
+    rgba(255, 255, 255, 0.202)
   );
 }
 .section-outer1 {
-  background-image: url("../assets/section-bg1.png");
+  background-image: url("../assets/111.png");
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
 }
+.section-outer2 {
+  background-image: url("../assets/222.png");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
 :deep(.el-divider__text) {
   padding: 0 7px;
 }
@@ -188,7 +205,7 @@ export default {
   margin: 0 auto;
 }
 .bottom-section {
-  background-image: url("../assets/bottom.jpg");
+  background-image: url("../assets/bottom-section-bg-1.svg");
   background-size: cover;
   background-position: center top;
   background-repeat: no-repeat;
@@ -200,6 +217,12 @@ export default {
   padding-right: 15px;
 }
 .embed-responsive {
+  --tw-shadow: 0px 1px 10px rgba(5, 25, 51, 0.12);
+  --tw-shadow-colored: 0px 1px 10px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  max-height: 410px;
+  border-radius: 1.875rem;
   position: relative;
   display: block;
   width: 100%;

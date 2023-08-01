@@ -29,6 +29,7 @@ export default {};
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 60px;
 }
 .content .planet {
   width: 195px;

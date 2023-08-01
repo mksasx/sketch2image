@@ -2,7 +2,7 @@
   <div id="app">
     <el-container style="height: 100%">
       <el-header style="height: 55px">
-        <div class="header-menu">
+        <div class="header-menu" v-if="!xians">
           <el-menu
             :default-active="$route.path"
             class="el-menu-demo"
@@ -165,6 +165,169 @@
             >
           </el-menu>
         </div>
+        <div class="header-menu" v-if="xians">
+          <el-menu
+            :default-active="$route.path"
+            class="el-menu-demo"
+            mode="horizontal"
+            background-color="#fff"
+            text-color="#000"
+            active-text-color="#056de8"
+            router
+            ><div
+              class="flex items-center ml-10 mr-2 md:mr-5 left-menu"
+              style="float: left; height: 55px; cursor: pointer"
+            >
+              <img
+                @click="$router.push('/')"
+                style="width: 48px; height: 90%"
+                src="./assets/round1.png"
+              />
+              <el-dropdown class="dropdown" trigger="click">
+                <i
+                  class="el-icon-arrow-down el-icon--right"
+                  style="font-size: 20px"
+                ></i>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item
+                    icon="el-icon-magic-stick"
+                    @click.native="go()"
+                    >文本生成草图</el-dropdown-item
+                  >
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
+            <div
+              class="mr-5 sm:inline hidden"
+              style="
+                float: left;
+                height: 42px;
+                cursor: pointer;
+                border-right: 2px solid #908f8f97;
+                margin-top: 7.5px;
+              "
+            ></div>
+
+            <div class="font-normal text-2xl float-right timedis">
+              {{ times }}&nbsp;&nbsp;{{ weekDay }}
+            </div>
+            <div
+              class="mr-5 sm:inline hidden"
+              style="
+                float: right;
+                height: 40px;
+                cursor: pointer;
+                border-right: 2px solid #888;
+                margin-top: 7.5px;
+              "
+            ></div>
+            <div
+              class="mr-1 inline sm:hidden"
+              style="
+                float: right;
+                height: 35px;
+
+                border-right: 2px solid #888;
+                margin-top: 5px;
+              "
+            ></div>
+            <el-popover placement="bottom" width="250" trigger="click">
+              <div class="detail w-full">
+                <p>
+                  <img
+                    :src="imgSrc"
+                    style="
+                      width: 100px;
+                      height: 100px;
+                      display: inline-block;
+                      vertical-align: initial;
+                      position: absolute;
+                      /* vertical-align: initial; */
+                      margin-top: -1px;
+                      margin-left: -15px;
+                    "
+                  />&nbsp;
+                  <span class="h-full detail_temdis">
+                    {{ weather.tem }}℃
+                    <span class="detail_highdis"
+                      >{{ weather.tem1 }}/{{ weather.tem2 }}</span
+                    > </span
+                  ><span
+                    class="h-full flex justify-center flex-wrap"
+                    style="width: 100px; margin-top: 10px"
+                  >
+                    <div class="wea_detail">{{ weather.wea }}</div>
+                    <div class="container_aqi" id="container_aqi"></div
+                  ></span>
+                </p>
+                <p>
+                  <i
+                    class="el-icon-location-information"
+                    style="margin-right: 6px"
+                  ></i
+                  ><span class="name">您所在的城市:</span>&nbsp;&nbsp;{{
+                    weather.city
+                  }}
+                </p>
+                <p>
+                  <i class="el-icon-wind-power" style="margin-right: 6px"></i>
+                  <span class="name">风向:</span>&nbsp;&nbsp;<span>{{
+                    weather.win
+                  }}</span
+                  >&nbsp;&nbsp;&nbsp;<span class="name">风力:&nbsp;&nbsp;</span
+                  ><span>{{ weather.win_speed }}</span>
+                </p>
+                <p class="humidity">
+                  <i class="el-icon-odometer" style="margin-right: 6px"></i>
+                  <span class="name">湿度:&nbsp;&nbsp;</span
+                  >{{ weather.humidity }} &nbsp;&nbsp;&nbsp;<span class="name"
+                    >能见度:&nbsp;&nbsp;</span
+                  >{{ weather.visibility }}
+                </p>
+                <p id="reporttime">
+                  消息发布时间:&nbsp;&nbsp;{{ weather.date }}&nbsp;{{
+                    weather.update_time
+                  }}
+                </p>
+              </div>
+              <div
+                slot="reference"
+                class="font-normal text-2xl float-right weatherdis flex items-center cursor-pointer"
+              >
+                <div class="h-full">
+                  <img
+                    v-if="this.imgSrc != null"
+                    :src="imgSrc"
+                    style="
+                      height: 100%;
+                      display: inline-block;
+                      vertical-align: initial;
+                    "
+                  />
+                </div>
+                <div class="h-full temdis">
+                  {{ weather.tem }}℃
+                  <span class="highdis"
+                    >{{ weather.tem1 }}/{{ weather.tem2 }}</span
+                  >
+                </div>
+              </div>
+            </el-popover>
+            <el-menu-item index="/generate" class="hidden sm:inline">
+              <span slot="title" class="hidden sm:inline"
+                ><i
+                  class="el-icon-magic-stick"
+                  style="
+                    font-size: 30px;
+                    margin-right: 15px;
+                    margin-top: -1.5px;
+                  "
+                ></i
+                >文本生成草图</span
+              ></el-menu-item
+            >
+          </el-menu>
+        </div>
       </el-header>
       <el-main> <router-view /> </el-main
     ></el-container>
@@ -206,10 +369,7 @@ export default {
   },
   computed: {
     xians() {
-      return !(
-        this.$route.path.includes("/main") ||
-        this.$route.path.includes("/status")
-      );
+      return !this.$route.path.includes("/generate");
     },
   },
   data: () => ({
@@ -407,9 +567,11 @@ body {
   line-height: 17.5px;
   word-wrap: break-word;
   text-align: center;
+  color: #000;
 }
 .highdis {
   font-size: 13px;
+  color: #000;
 }
 .temdis2 {
   padding-top: 11%;
@@ -438,7 +600,7 @@ body {
   font-size: 18px;
   height: 55px;
   line-height: 55px;
-  color: #cee2f1;
+  color: #000;
   margin-right: 20px;
 }
 
@@ -537,7 +699,7 @@ body {
     // padding-top: 3px;
     line-height: 20px;
     width: 110px;
-    color: #cee2f1;
+    color: #000;
     word-wrap: break-word;
     text-align: center;
   }

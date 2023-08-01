@@ -2,12 +2,12 @@
   <div>
     <div
       v-if="!isProcessing && !showResults"
-      class="form_container md:w-10/12 w-11/12 md:px-8 py-6 px-4 flex flex-col"
+      class="form_container md:w-10/12 w-11/12 md:px-8 py-6 px-4 flex flex-col items-center"
     >
-      <div class="flex flex-row justify-between items-center mb-4">
-        <h3 class="tracking-wider">请详细描述您的艺术构想</h3>
+      <div class="flex flex-row justify-between items-center mb-4 w-full">
+        <span class="tracking-wider">请描述您的艺术构想</span>
         <span
-          class="block cursor-pointer bg-white rounded-md pl-3 pr-2 py-2.5 text-sm leading-3 antialiased font-semibold text-left tracking-wider"
+          class="block cursor-pointer bg-white rounded-md pl-2 pr-2 py-2.5 text-sm leading-3 antialiased font-semibold text-left tracking-wider"
           style="color: rgba(0, 0, 0, 0.7)"
           @click="generatePrompt()"
           >Surprise Me 💡</span
@@ -127,8 +127,9 @@
           >
         </p>
       </div>
-      <div class="flex justify-center" v-if="textarea == ''">
+      <div class="flex justify-center mb-3">
         <el-button
+          v-if="textarea == ''"
           type="info"
           disabled
           style="font-size: 18px; font-weight: 500"
@@ -138,9 +139,8 @@
           ></i
           >立即开始艺术创作
         </el-button>
-      </div>
-      <div class="flex justify-center" v-else>
         <el-button
+          v-else
           type="primary"
           style="font-size: 18px; font-weight: 500"
           @click="generatePic()"
@@ -151,6 +151,49 @@
           >立即开始艺术创作
         </el-button>
       </div>
+      <div
+        class="w-full md:w-1/2 h-full items-center leftdis flex flex-col justify-center hidden-sm-and-up"
+      >
+        <el-carousel
+          :autoplay="false"
+          indicator-position="outside"
+          style="width: 92.5%; margin-top: 1rem"
+          @change="onChange"
+        >
+          <el-carousel-item v-for="item in displayList" :key="item.key">
+            <img :src="item.src" style="width: 100%; height: 100%" />
+          </el-carousel-item>
+        </el-carousel>
+        <p class="font-medium tracking-wider mb-3" style="width: 92.5%">
+          {{ displayList[curIndex].text }}
+        </p>
+        <div style="width: 92.5%" class="pb-3">
+          <el-button
+            class="likebutton"
+            style="width: 100%"
+            v-if="!isLiked[curIndex]"
+            @click="likeit()"
+            ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
+            >喜欢</el-button
+          >
+          <el-button
+            class="liked"
+            type="text"
+            style="width: 100%"
+            v-if="isLiked[curIndex]"
+            @click="likeit()"
+            ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
+            >喜欢</el-button
+          >
+
+          <!-- <p class="flex justify-center" v-else>
+              <span class="liked mb-1"
+                ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
+                >喜欢</span
+              >
+            </p> -->
+        </div>
+      </div>
     </div>
     <div
       v-if="isProcessing && !showResults"
@@ -158,7 +201,7 @@
     >
       <div class="flex flex-col md:flex-row justify-around items-center mb-4">
         <div
-          class="w-11/12 md:w-1/2 h-full items-center leftdis flex flex-col justify-center"
+          class=" hidden-sm-and-down w-1/2 h-full items-center leftdis flex flex-col justify-center"
         >
           <el-carousel
             :autoplay="false"
@@ -201,6 +244,49 @@
           </div>
         </div>
         <PlanetLoading></PlanetLoading>
+        <div
+          class="hidden-sm-and-up w-full  h-full items-center leftdis flex flex-col justify-center"
+        >
+          <el-carousel
+            :autoplay="false"
+            indicator-position="outside"
+            style="width: 92.5%; margin-top: 1rem"
+            @change="onChange"
+          >
+            <el-carousel-item v-for="item in displayList" :key="item.key">
+              <img :src="item.src" style="width: 100%; height: 100%" />
+            </el-carousel-item>
+          </el-carousel>
+          <p class="font-medium tracking-wider mb-3" style="width: 92.5%">
+            {{ displayList[curIndex].text }}
+          </p>
+          <div style="width: 92.5%" class="pb-3">
+            <el-button
+              class="likebutton"
+              style="width: 100%"
+              v-if="!isLiked[curIndex]"
+              @click="likeit()"
+              ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
+              >喜欢</el-button
+            >
+            <el-button
+              class="liked"
+              type="text"
+              style="width: 100%"
+              v-if="isLiked[curIndex]"
+              @click="likeit()"
+              ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
+              >喜欢</el-button
+            >
+
+            <!-- <p class="flex justify-center" v-else>
+              <span class="liked mb-1"
+                ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
+                >喜欢</span
+              >
+            </p> -->
+          </div>
+        </div>
       </div>
     </div>
     <div
@@ -388,7 +474,7 @@ export default {
       prompt: "",
       textarea: "",
       isProcessing: false,
-      showResults: true,
+      showResults: false,
       advanced: false,
       advanced2: true,
       NumberOfStrokes: 8,
@@ -432,17 +518,17 @@ export default {
         },
         {
           value: require("../assets/oil.png"),
-          label: "油画绘制",
+          label: "油画绘制1",
           srcList: [require("../assets/oil.png")],
         },
         {
           value: require("../assets/oil.png"),
-          label: "油画绘制",
+          label: "油画绘制2",
           srcList: [require("../assets/oil.png")],
         },
         {
           value: require("../assets/oil.png"),
-          label: "油画绘制",
+          label: "油画绘制3",
           srcList: [require("../assets/oil.png")],
         },
       ],
@@ -556,6 +642,9 @@ export default {
       };
       setTimeout(() => {
         this.isProcessing = !this.isProcessing;
+        if (this.showResults) {
+          this.showResults = !this.showResults;
+        }
       }, 500);
       setTimeout(() => {
         this.isProcessing = !this.isProcessing;
