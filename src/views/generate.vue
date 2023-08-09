@@ -11,6 +11,11 @@
           style="color: rgba(0, 0, 0, 0.7)"
           @click="generatePrompt()"
           >Surprise Me 💡</span
+        ><span
+          class="block cursor-pointer bg-white rounded-md pl-2 pr-2 py-2.5 text-sm leading-3 antialiased font-semibold text-left tracking-wider"
+          style="color: rgba(0, 0, 0, 0.7)"
+          @click="picTest()"
+          >图片测试</span
         >
       </div>
       <el-input
@@ -201,7 +206,7 @@
     >
       <div class="flex flex-col md:flex-row justify-around items-center mb-4">
         <div
-          class=" hidden-sm-and-down w-1/2 h-full items-center leftdis flex flex-col justify-center"
+          class="hidden-sm-and-down w-1/2 h-full items-center leftdis flex flex-col justify-center"
         >
           <el-carousel
             :autoplay="false"
@@ -245,7 +250,7 @@
         </div>
         <PlanetLoading></PlanetLoading>
         <div
-          class="hidden-sm-and-up w-full  h-full items-center leftdis flex flex-col justify-center"
+          class="hidden-sm-and-up w-full h-full items-center leftdis flex flex-col justify-center"
         >
           <el-carousel
             :autoplay="false"
@@ -695,6 +700,22 @@ export default {
     // 关闭查看器
     closeViewer() {
       this.showViewer = false;
+    },
+    picTest() {
+      // 发包
+      this.$axios({
+        method: "get",
+        url: " http://127.0.0.1:8000/api/draw",
+        params: {
+          text: "Avator",
+        },
+      })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
 };
