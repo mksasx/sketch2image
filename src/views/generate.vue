@@ -5,17 +5,14 @@
       class="form_container md:w-10/12 w-11/12 md:px-8 py-6 px-4 flex flex-col items-center"
     >
       <div class="flex flex-row justify-between items-center mb-4 w-full">
-        <span class="tracking-wider">请描述您的艺术构想</span>
+        <span class="tracking-wider text-xl font-medium"
+          >请描述您的艺术构想</span
+        >
         <span
           class="block cursor-pointer bg-white rounded-md pl-2 pr-2 py-2.5 text-sm leading-3 antialiased font-semibold text-left tracking-wider"
           style="color: rgba(0, 0, 0, 0.7)"
           @click="generatePrompt()"
           >Surprise Me 💡</span
-        ><span
-          class="block cursor-pointer bg-white rounded-md pl-2 pr-2 py-2.5 text-sm leading-3 antialiased font-semibold text-left tracking-wider"
-          style="color: rgba(0, 0, 0, 0.7)"
-          @click="picTest()"
-          >图片测试</span
         >
       </div>
       <el-input
@@ -49,15 +46,14 @@
           <h3 class="tracking-wider">
             <el-tooltip effect="dark" placement="top-start">
               <div slot="content">
-                笔画数默认为8，最大为20，最小为2<br />超出范围将自动取最大或最小值
+                笔画数默认为96，要求非负数<br />超出范围将自动取最大或最小值
               </div>
               <i class="el-icon-info mr-1"></i> </el-tooltip
             >自定义笔画数
           </h3>
           <el-input-number
             v-model="NumberOfStrokes"
-            :min="2"
-            :max="20"
+            :min="1"
             style="width: 55%"
           ></el-input-number>
         </div>
@@ -97,7 +93,7 @@
           <h3 class="tracking-wider">
             <el-tooltip effect="dark" placement="top-start">
               <div slot="content">
-                可以自定义生成图片的风格<br />默认为随机风格
+                可以自定义生成图片的风格<br />默认为手写风格
               </div>
               <i class="el-icon-info mr-1"></i> </el-tooltip
             >自定义风格化
@@ -105,12 +101,12 @@
           <el-select v-model="styleDiy" placeholder="请选择" style="width: 55%">
             <el-option
               v-for="item in styleList"
-              :key="item.label"
+              :key="item.value"
               :label="item.label"
-              :value="item.label"
+              :value="item.value"
               ><el-image
                 class="option_img"
-                :src="item.value"
+                :src="item.pic"
                 :preview-src-list="item.srcList"
                 fit="contain"
                 style="float: left; width: 60px; height: 45px"
@@ -156,72 +152,125 @@
           >立即开始艺术创作
         </el-button>
       </div>
-      <div
-        class="w-full md:w-1/2 h-full items-center leftdis flex flex-col justify-center hidden-sm-and-up"
-      >
-        <el-carousel
-          :autoplay="false"
-          indicator-position="outside"
-          style="width: 92.5%; margin-top: 1rem"
-          @change="onChange"
-        >
-          <el-carousel-item v-for="item in displayList" :key="item.key">
-            <img :src="item.src" style="width: 100%; height: 100%" />
-          </el-carousel-item>
-        </el-carousel>
-        <p class="font-medium tracking-wider mb-3" style="width: 92.5%">
-          {{ displayList[curIndex].text }}
+      <div class="w-full">
+        <p class="tracking-wider text-2xl font-medium exampleText">
+          DiffSketch作品示例
         </p>
-        <div style="width: 92.5%" class="pb-3">
-          <el-button
-            class="likebutton"
-            style="width: 100%"
-            v-if="!isLiked[curIndex]"
-            @click="likeit()"
-            ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
-            >喜欢</el-button
+      </div>
+      <div class="flex-col flex md:flex-row w-full justify-around flex-wrap">
+        <div
+          class="w-full md:w-3/10 h-full items-center leftdis flex flex-col justify-center"
+          v-for="item in displayList.slice(
+            (currentPage - 1) * pageSize,
+            currentPage * pageSize
+          )"
+          :key="item.key"
+        >
+          <el-image
+            :src="item.src"
+            :preview-src-list="item.srcList"
+            fit="scale-down"
+            lazy
+            style="
+              width: 90%;
+              margin-top: 1.2rem;
+              margin-bottom: 1rem;
+              height: 100%;
+            "
+          ></el-image>
+          <!-- <el-carousel
+            :autoplay="false"
+            indicator-position="outside"
+            style="width: 90%; margin-top: 1rem"
+            @change="onChange"
           >
-          <el-button
-            class="liked"
-            type="text"
-            style="width: 100%"
-            v-if="isLiked[curIndex]"
-            @click="likeit()"
-            ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
-            >喜欢</el-button
-          >
+            <el-carousel-item v-for="item in displayList" :key="item.key">
+              <el-image
+                :src="item.src"
+                style="width: 100%; height: 100%"
+              ></el-image>
+            </el-carousel-item>
+          </el-carousel> -->
 
-          <!-- <p class="flex justify-center" v-else>
-              <span class="liked mb-1"
-                ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
-                >喜欢</span
-              >
-            </p> -->
+          <p
+            class="font-medium tracking-wider"
+            style="
+              width: 90%;
+              min-height: 65px;
+              word-break: break-all;
+              margin-bottom: 1.25rem;
+            "
+          >
+            <span class="block mb-1"
+              ><span class="text-blue-600">Prompt:&nbsp;</span
+              >{{ item.text }}</span
+            >
+            <span class="text-sm"
+              ><span class="text-blue-600">Style:&nbsp;</span
+              >{{ item.StyleText }}&nbsp;&nbsp;</span
+            >
+            <span class="text-sm"
+              ><span class="text-blue-600">笔画数:&nbsp;</span
+              >{{ item.NumberOfStrokes }}&nbsp;&nbsp;</span
+            >
+            <span class="text-sm"
+              ><span class="text-blue-600">控制点数:&nbsp;</span
+              >{{ item.NumberOfControlPoints }}&nbsp;&nbsp;</span
+            >
+          </p>
+
+          <!-- <div style="width: 90%" class="pb-3">
+            <el-button
+              class="likebutton"
+              style="width: 100%"
+              v-if="!isLiked[curIndex]"
+              @click="likeit()"
+              ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
+              >喜欢</el-button
+            >
+            <el-button
+              class="liked"
+              type="text"
+              style="width: 100%"
+              v-if="isLiked[curIndex]"
+              @click="likeit()"
+              ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
+              >喜欢</el-button
+            >
+          </div> -->
         </div>
       </div>
+      <el-pagination
+        class="mt-2"
+        :current-page.sync="currentPage"
+        :page-size="pageSize"
+        @current-change="handleCurrentChange"
+        layout="prev, pager, next, jumper"
+        :total="this.displayList.length"
+      />
     </div>
     <div
       v-if="isProcessing && !showResults"
       class="form_container_process md:w-10/12 w-11/12 md:px-8 pt-6 pb-4 px-4 flex flex-col"
     >
       <div class="flex flex-col md:flex-row justify-around items-center mb-4">
-        <div
+        <!-- <div
           class="hidden-sm-and-down w-1/2 h-full items-center leftdis flex flex-col justify-center"
         >
           <el-carousel
             :autoplay="false"
             indicator-position="outside"
-            style="width: 92.5%; margin-top: 1rem"
+            style="width: 90%; margin-top: 1rem"
             @change="onChange"
           >
             <el-carousel-item v-for="item in displayList" :key="item.key">
               <img :src="item.src" style="width: 100%; height: 100%" />
             </el-carousel-item>
           </el-carousel>
-          <p class="font-medium tracking-wider mb-3" style="width: 92.5%">
+          <p class="font-medium tracking-wider mb-3" style="width: 90%">
             {{ displayList[curIndex].text }}
           </p>
-          <div style="width: 92.5%" class="pb-3">
+          <div style="width: 90%" class="pb-3">
             <el-button
               class="likebutton"
               style="width: 100%"
@@ -239,33 +288,26 @@
               ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
               >喜欢</el-button
             >
-
-            <!-- <p class="flex justify-center" v-else>
-              <span class="liked mb-1"
-                ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
-                >喜欢</span
-              >
-            </p> -->
           </div>
-        </div>
+        </div> -->
         <PlanetLoading></PlanetLoading>
-        <div
+        <!-- <div
           class="hidden-sm-and-up w-full h-full items-center leftdis flex flex-col justify-center"
         >
           <el-carousel
             :autoplay="false"
             indicator-position="outside"
-            style="width: 92.5%; margin-top: 1rem"
+            style="width: 90%; margin-top: 1rem"
             @change="onChange"
           >
             <el-carousel-item v-for="item in displayList" :key="item.key">
               <img :src="item.src" style="width: 100%; height: 100%" />
             </el-carousel-item>
           </el-carousel>
-          <p class="font-medium tracking-wider mb-3" style="width: 92.5%">
+          <p class="font-medium tracking-wider mb-3" style="width: 90%">
             {{ displayList[curIndex].text }}
           </p>
-          <div style="width: 92.5%" class="pb-3">
+          <div style="width: 90%" class="pb-3">
             <el-button
               class="likebutton"
               style="width: 100%"
@@ -283,15 +325,8 @@
               ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
               >喜欢</el-button
             >
-
-            <!-- <p class="flex justify-center" v-else>
-              <span class="liked mb-1"
-                ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
-                >喜欢</span
-              >
-            </p> -->
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
     <div
@@ -342,15 +377,14 @@
           <h3 class="tracking-wider">
             <el-tooltip effect="dark" placement="top-start">
               <div slot="content">
-                笔画数默认为8，最大为20，最小为2<br />超出范围将自动取最大或最小值
+                笔画数默认为96，要求非负数<br />超出范围将自动取最大或最小值
               </div>
               <i class="el-icon-info mr-1"></i> </el-tooltip
             >自定义笔画数
           </h3>
           <el-input-number
             v-model="NumberOfStrokes"
-            :min="2"
-            :max="20"
+            :min="1"
             style="width: 55%"
           ></el-input-number>
         </div>
@@ -398,12 +432,12 @@
           <el-select v-model="styleDiy" placeholder="请选择" style="width: 55%">
             <el-option
               v-for="item in styleList"
-              :key="item.label"
+              :key="item.value"
               :label="item.label"
-              :value="item.label"
+              :value="item.value"
               ><el-image
                 class="option_img"
-                :src="item.value"
+                :src="item.pic"
                 :preview-src-list="item.srcList"
                 fit="contain"
                 style="float: left; width: 60px; height: 45px"
@@ -427,17 +461,22 @@
       </div>
       <div class="flex flex-row flex-wrap justify-around w-full">
         <div
-          class="flex flex-col w-full md:w-1/2 imageContainer"
+          class="flex flex-col w-full md:w-1/3 imageContainer"
           v-for="item in resultList"
           :key="item.label"
         >
+          <div style="margin: 0 auto; font-size: 21px; font-weight: 600">
+            {{ item.txt }}
+          </div>
           <el-image
             :src="item.value"
             :preview-src-list="item.srcList"
-            fit="cover"
-            style="width: 100%; height: 90%"
+            fit="scale-down"
+            style="width: 100%; height: 78%"
             class="result_img"
             lazy
+            loop="true"
+            autoplay="true"
           ></el-image
           ><el-image-viewer
             class="image_viewer"
@@ -451,7 +490,7 @@
             ><el-button
               type="primary"
               style="width: 47%"
-              @click="click_down_excel(item.value)"
+              @click="click_down_excel(item.value, item.txt)"
             >
               <i class="el-icon-download mr-1"></i>下载图片</el-button
             >
@@ -482,83 +521,145 @@ export default {
       showResults: false,
       advanced: false,
       advanced2: true,
-      NumberOfStrokes: 8,
+      NumberOfStrokes: 96,
       flexibility: 80,
       advancedSet: false,
       advancedSet2: true,
       showViewer: false, // 显示查看器
       curIndex: 0,
       isLiked: [false, false, false, false],
-      styleDiy: "素描草图",
+      styleDiy: "sketch",
       srcList: [],
       styleList: [
         {
-          value: require("../assets/sketch.png"),
+          value: "sketch",
+          pic: require("../assets/sketch.png"),
           label: "素描草图",
           srcList: [require("../assets/sketch.png")],
         },
         {
-          value: require("../assets/color.png"),
+          value: "color",
+          pic: require("../assets/color.png"),
           label: "色彩丰富",
           srcList: [require("../assets/color.png")],
         },
         {
-          value: require("../assets/oil.png"),
+          value: "oil",
+          pic: require("../assets/oil.png"),
           label: "油画绘制",
           srcList: [require("../assets/oil.png")],
         },
       ],
       resultList: [
-        {
-          // value: require("../assets/sketch.png"),
-          value:
-            "https://fengru-pic.oss-cn-beijing.aliyuncs.com/00140634-e675-4a85-af2a-0ee4e434c7e2.png",
-          label: "素描草图",
-          srcList: [require("../assets/sketch.png")],
-        },
-        {
-          value: require("../assets/color.png"),
-          label: "色彩丰富",
-          srcList: [require("../assets/color.png")],
-        },
-        {
-          value: require("../assets/oil.png"),
-          label: "油画绘制1",
-          srcList: [require("../assets/oil.png")],
-        },
-        {
-          value: require("../assets/oil.png"),
-          label: "油画绘制2",
-          srcList: [require("../assets/oil.png")],
-        },
-        {
-          value: require("../assets/oil.png"),
-          label: "油画绘制3",
-          srcList: [require("../assets/oil.png")],
-        },
+        // {
+        //   value: require("../assets/color.png"),
+        //   label: "color",
+        //   srcList: [require("../assets/color.png")],
+        // },
+        // {
+        //   txt: "对照图片",
+        //   value: require("../assets/oil.png"),
+        //   label: "oil1",
+        //   srcList: [require("../assets/oil.png")],
+        // },
+        // {
+        //   txt: "对照图片",
+        //   value: require("../assets/oil.png"),
+        //   label: "oil2",
+        //   srcList: [require("../assets/oil.png")],
+        // },
+        // {
+        //   txt: "对照图片",
+        //   value: require("../assets/1.gif"),
+        //   label: "oil3",
+        //   srcList: [require("../assets/oil.png")],
+        // },
       ],
       displayList: [
         {
-          src: require("../assets/oil.png"),
+          src: require("../assets/download.png"),
           key: 1,
           text: "Very detailed masterpiece painting of baby yoda holding a lightsaber",
+          StyleText: "素描草图",
+          srcList: [require("../assets/download.png")],
+          NumberOfStrokes: 96,
+          NumberOfControlPoints: 100,
         },
         {
-          src: require("../assets/sketch.png"),
+          src: require("../assets/download.png"),
           key: 2,
-          text: "A fox is sitting on the sofa",
+          text: "Very detailed masterpiece painting of baby yoda holding a lightsaber",
+          StyleText: "素描草图122",
+          srcList: [require("../assets/download.png")],
+          NumberOfStrokes: 96,
+          NumberOfControlPoints: 100,
         },
         {
-          src: require("../assets/color.png"),
+          src: require("../assets/download.png"),
           key: 3,
-          text: "Colorful hot air balloons high over the mountains",
+          text: "Very detailed masterpiece painting of baby yoda holding a lightsaber",
+          StyleText: "素描草图",
+          srcList: [require("../assets/download.png")],
+          NumberOfStrokes: 96,
+          NumberOfControlPoints: 100,
         },
         {
-          src: require("../assets/oil.png"),
+          src: require("../assets/download.png"),
           key: 4,
-          text: "A cute cat in the style of Pixar animations rides a bike",
+          text: "Very detailed masterpiece painting of baby yoda holding a lightsaber",
+          StyleText: "素描草图",
+          srcList: [require("../assets/download.png")],
+          NumberOfStrokes: 96,
+          NumberOfControlPoints: 100,
+        },
+        {
+          src: require("../assets/download.png"),
+          key: 5,
+          text: "Very detailed masterpiece painting of baby yoda holding a lightsaber",
+          StyleText: "素描草图",
+          srcList: [require("../assets/download.png")],
+          NumberOfStrokes: 96,
+          NumberOfControlPoints: 100,
+        },
+        {
+          src: require("../assets/download.png"),
+          key: 6,
+          text: "Very detailed masterpiece painting of baby yoda holding a lightsaber",
+          StyleText: "素描草图",
+          srcList: [require("../assets/download.png")],
+          NumberOfStrokes: 96,
+          NumberOfControlPoints: 100,
+        },
+        {
+          src: require("../assets/download.png"),
+          key: 7,
+          text: "Very detailed masterpiece painting of baby yoda holding a lightsaber",
+          StyleText: "素描草图",
+          srcList: [require("../assets/download.png")],
+          NumberOfStrokes: 96,
+          NumberOfControlPoints: 100,
+        },
+        {
+          src: require("../assets/download.png"),
+          key: 8,
+          text: "Very detailed masterpiece painting of baby yoda holding a lightsaber",
+          StyleText: "素描草图",
+          srcList: [require("../assets/download.png")],
+          NumberOfStrokes: 96,
+          NumberOfControlPoints: 100,
+        },
+        {
+          src: require("../assets/download.png"),
+          key: 9,
+          text: "Very detailed masterpiece painting of baby yoda holding a lightsaber",
+          StyleText: "素描草图",
+          srcList: [require("../assets/download.png")],
+          NumberOfStrokes: 96,
+          NumberOfControlPoints: 100,
         },
       ],
+      currentPage: 1,
+      pageSize: 6,
     };
   },
   methods: {
@@ -605,6 +706,10 @@ export default {
     perFormat(value) {
       return `${value}%`;
     },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      console.log(this.currentPage);
+    },
     limitInput(value) {
       let aa =
         ("" + value) // 第一步：转成字符串
@@ -645,17 +750,72 @@ export default {
         flexibility: this.flexibility,
         styleDiy: this.styleDiy,
       };
-      setTimeout(() => {
-        this.isProcessing = !this.isProcessing;
-        if (this.showResults) {
-          this.showResults = !this.showResults;
-        }
-      }, 500);
-      setTimeout(() => {
-        this.isProcessing = !this.isProcessing;
+      this.isProcessing = !this.isProcessing;
+      if (this.showResults) {
         this.showResults = !this.showResults;
-      }, 2200);
-      console.log(set);
+      }
+      this.$axios({
+        method: "get",
+        url: " http://10.212.253.234:7075/api/draw",
+        params: {
+          prompt: this.textarea,
+          style: this.styleDiy,
+          NumberOfStrokes: this.NumberOfStrokes,
+          flexibility: this.flexibility,
+        },
+      })
+        .then((res) => {
+          // console.log(res);
+          this.resultList = [];
+          // 去掉msg开头和结尾的双引号
+          res.data.msg = res.data.msg.replace(/^\"|\"$/g, "");
+          res.data.msg2 = res.data.msg2.replace(/^\"|\"$/g, "");
+          // console.log(res.data.msg);
+          this.resultList.push({
+            // image2
+            txt: "对照图片",
+            value: "data:image/png;base64," + res.data.msg2,
+            label: "color",
+            srcList: ["data:image/png;base64," + res.data.msg2],
+          });
+          this.resultList.push({
+            txt: "生成图片",
+            value: "data:image/png;base64," + res.data.msg,
+            label: "sketch",
+            srcList: ["data:image/png;base64," + res.data.msg],
+          });
+          this.resultList.push({
+            txt: "生成过程",
+            value: "data:image/gif;base64," + res.data.msg3,
+            label: "sketch",
+            srcList: ["data:image/gif;base64," + res.data.msg3],
+          });
+          // this.resultList.push({
+          //   // image2
+          //   txt: "对照图片",
+          //   value: res.data.msg2,
+          //   label: "color",
+          //   srcList: [res.data.msg2],
+          // });
+          // this.resultList.push({
+          //   txt: "生成图片",
+          //   value: res.data.msg,
+          //   label: "sketch",
+          //   srcList: [res.data.msg],
+          // });
+          // this.resultList.push({
+          //   txt: "生成动态过程",
+          //   value: res.data.msg3,
+          //   label: "sketch",
+          //   srcList: [res.data.msg3],
+          // });
+          this.isProcessing = !this.isProcessing;
+          this.showResults = !this.showResults;
+          // console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     onChange(curVal, oldVal) {
       this.curIndex = curVal;
@@ -668,21 +828,28 @@ export default {
     goBack() {
       this.showResults = !this.showResults;
     },
-    click_down_excel(url) {
-      console.log(url);
-      let dom = document.createElement("a");
-      dom.href = url;
-      // 提取出第一个点前的文字
-      let name = url.substring(5, url.indexOf("."));
-      // 提取出最后一个点后的文字
-      let suffix = url.substring(url.lastIndexOf(".") + 1);
+    click_down_excel(url, name) {
+      // console.log(url);
+      const link = document.createElement("a");
+      link.style.display = "none";
+      // 将 base64 编码的图片数据设置为链接的 href 属性
+      link.href = url;
+      // 设置下载文件名
+      if (name == "生成图片" || name == "对照图片") {
+        link.download = name + ".png";
+      } // 这里可以自定义下载文件名
+      else {
+        link.download = name + ".gif"; // 这里可以自定义下载文件名
+      }
 
-      dom.download = name + "." + suffix;
-      dom.style.display = "none"; // 隐藏a标签
-      document.body.appendChild(dom);
-      // 点击下载
-      dom.click();
-      document.body.removeChild(dom);
+      // 将链接添加到 DOM 中
+      document.body.appendChild(link);
+
+      // 模拟点击链接以触发下载
+      link.click();
+
+      // 移除链接元素
+      document.body.removeChild(link);
     },
     preview(val) {
       // console.log(document.querySelectorAll(".result_img"));
@@ -705,9 +872,13 @@ export default {
       // 发包
       this.$axios({
         method: "get",
-        url: " http://127.0.0.1:8000/api/draw",
+        url: " http://10.212.253.234:7075/api/draw",
         params: {
-          text: "Avator",
+          prompt:
+            "A sketching with watercolors of a modern Athens neighborhood",
+          style: this.styleDiy,
+          NumberOfStrokes: this.NumberOfStrokes,
+          flexibility: this.flexibility,
         },
       })
         .then((res) => {
@@ -792,14 +963,15 @@ export default {
 }
 .imageContainer {
   height: 480px;
+  width: 30%;
 }
-.imageContainer:nth-child(odd) {
-  padding: 10px 15px 25px 80px;
-} //奇数行
+// .imageContainer:nth-child(odd) {
+//   padding: 10px 15px 25px 80px;
+// } //奇数行
 
-.imageContainer:nth-child(even) {
-  padding: 10px 80px 25px 15px;
-}
+// .imageContainer:nth-child(0) {
+//   padding: 10px 80px 25px 15px;
+// }
 :deep(.el-image-viewer__mask) {
   background: #0000007a;
 }
@@ -842,6 +1014,7 @@ export default {
   }
   .imageContainer {
     height: 380px;
+    width: 100%;
   }
   .imageContainer:nth-child(0) {
     padding: 15px 10px 5px 10px;
@@ -883,6 +1056,15 @@ export default {
     height: 0px;
     animation: shrink 0.5s 1 ease-out;
   }
+  .leftdis {
+    --tw-shadow: 0px 3.7112px 13.917px rgba(0, 0, 0, 0.25);
+    --tw-shadow-colored: 0px 3.7112px 13.917px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
+      var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+    border-radius: 10px;
+    background: #fff;
+    margin-bottom: 25px;
+  }
 }
 .el-carousel__item h3 {
   color: #475669;
@@ -918,6 +1100,7 @@ export default {
     var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
   border-radius: 10px;
   background: #fff;
+  margin-top: 25px;
 }
 .likebutton {
   border: none;
@@ -950,5 +1133,33 @@ export default {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+.exampleText {
+  // width: fit-content;
+  // background-color: white; /* 白色背景 */
+  // padding: 15px; /* 调整内边距以增加空间 */
+  // box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* 阴影效果 */
+  // border-radius: 5px; /* 圆角边框 */
+}
+::v-deep .el-select-dropdown__item li {
+  background-color: transparent !important;
+}
+// prev和next箭头的样式
+::v-deep .el-pagination .btn-next,
+::v-deep .el-pagination .btn-prev {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+// prev和next箭头disabled的样式
+::v-deep .el-pagination button:disabled {
+  background-color: transparent !important;
+}
+// 页码样式
+::v-deep .el-pager li {
+  background-color: transparent !important;
+}
+// active的页码样式
+::v-deep .el-pager li.active {
+  color: #267aff !important;
 }
 </style>
