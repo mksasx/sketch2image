@@ -36,40 +36,75 @@
       </div>
       <div
         v-show="advancedSet"
-        class="flex flex-col md:flex-row md:justify-between mt-5 settings"
+        class="flex flex-col md:flex-row md:justify-between mt-5 settings flex-wrap w-full"
         :class="advanced == false ? 'off' : 'on'"
       >
         <div
-          class="flex flex-row justify-between items-center indeSet"
-          style="width: 33%; padding-right: 20px"
+          class="flex flex-row justify-between items-center indeSet flex-wrap"
+          style="width: 100%"
         >
           <h3 class="tracking-wider">
             <el-tooltip effect="dark" placement="top-start">
-              <div slot="content">
-                笔画数默认为96，要求非负数<br />超出范围将自动取最大或最小值
-              </div>
+              <div slot="content">笔画数控制了作图的精细程度</div>
               <i class="el-icon-info mr-1"></i> </el-tooltip
             >自定义笔画数
           </h3>
-          <el-input-number
+          <!-- <el-input-number
             v-model="NumberOfStrokes"
             :min="1"
             style="width: 55%"
-          ></el-input-number>
+          ></el-input-number> -->
+          <el-slider
+            class="hidden-sm-and-down"
+            v-model="NumberOfStrokes"
+            style="width: 85%"
+            show-input
+            :min="30"
+            :max="200"
+            :marks="marks1"
+          ></el-slider>
+          <el-slider
+            class="w-11/12 hidden-sm-and-up"
+            style="margin: 0 auto"
+            v-model="NumberOfStrokes"
+            :min="30"
+            :max="200"
+            :marks="marks1"
+          >
+          </el-slider>
         </div>
         <div
-          class="flex flex-row justify-between items-center indeSet"
-          style="width: 33%; padding-right: 20px"
+          class="flex flex-row justify-between items-center indeSet flex-wrap"
+          style="width: 100%"
         >
           <h3 class="tracking-wider">
             <el-tooltip effect="dark" placement="top-start">
-              <div slot="content">
-                自由度默认为80%，最大为100%，最小为10%<br />最多支持输入两位小数
-              </div>
+              <div slot="content">自由度默认为4，最小为2，最大为8</div>
               <i class="el-icon-info mr-1"></i> </el-tooltip
-            >自定义自由度
+            >自定义控制点数
           </h3>
-          <el-input
+          <el-slider
+            class="hidden-sm-and-down"
+            style="width: 85%"
+            v-model="NumberOfControlPoints"
+            show-input
+            :min="2"
+            :max="8"
+            :step="1"
+            :marks="marks2"
+          >
+          </el-slider>
+          <el-slider
+            class="w-11/12 hidden-sm-and-up"
+            style="margin: 0 auto"
+            v-model="NumberOfControlPoints"
+            :min="2"
+            :max="8"
+            :step="1"
+            :marks="marks2"
+          >
+          </el-slider>
+          <!-- <el-input
             v-model="flexibility"
             @input="limitInput($event)"
             style="width: 55%"
@@ -84,11 +119,11 @@
               "
               >%</i
             >
-          </el-input>
+          </el-input> -->
         </div>
         <div
           class="flex flex-row justify-between items-center indeSet"
-          style="width: 33%; padding-right: 0px"
+          style="width: 32%; padding-right: 0px; margin-top: 10px"
         >
           <h3 class="tracking-wider">
             <el-tooltip effect="dark" placement="top-start">
@@ -96,7 +131,7 @@
                 可以自定义生成图片的风格<br />默认为手写风格
               </div>
               <i class="el-icon-info mr-1"></i> </el-tooltip
-            >自定义风格化
+            >自定义风格
           </h3>
           <el-select v-model="styleDiy" placeholder="请选择" style="width: 55%">
             <el-option
@@ -116,6 +151,62 @@
               }}</span>
             </el-option></el-select
           >
+        </div>
+        <div
+          class="flex flex-row justify-between items-center indeSet flex-wrap"
+          style="width: 32%; margin-top: 10px"
+        >
+          <h3 class="tracking-wider">
+            <el-tooltip effect="dark" placement="top-start">
+              <div slot="content">自由度默认为4，最小为2，最大为8</div>
+              <i class="el-icon-info mr-1"></i> </el-tooltip
+            >Clip损失强度
+          </h3>
+
+          <el-input
+            v-model="flexibility"
+            @input="limitInput($event)"
+            style="width: 55%"
+          >
+            <i
+              slot="suffix"
+              style="
+                font-style: normal;
+                margin-right: 10px;
+                color: #000;
+                size: 15px;
+              "
+              >%</i
+            >
+          </el-input>
+        </div>
+        <div
+          class="flex flex-row justify-between items-center indeSet flex-wrap"
+          style="width: 32%; margin-top: 10px"
+        >
+          <h3 class="tracking-wider">
+            <el-tooltip effect="dark" placement="top-start">
+              <div slot="content">自由度默认为4，最小为2，最大为8</div>
+              <i class="el-icon-info mr-1"></i> </el-tooltip
+            >SDS损失强度
+          </h3>
+
+          <el-input
+            v-model="flexibility"
+            @input="limitInput($event)"
+            style="width: 55%"
+          >
+            <i
+              slot="suffix"
+              style="
+                font-style: normal;
+                margin-right: 10px;
+                color: #000;
+                size: 15px;
+              "
+              >%</i
+            >
+          </el-input>
         </div>
       </div>
       <div class="flex justify-center">
@@ -205,17 +296,13 @@
               ><span class="text-blue-600">Prompt:&nbsp;</span
               >{{ item.text }}</span
             >
-            <span class="text-sm"
+            <span class="text-base"
               ><span class="text-blue-600">Style:&nbsp;</span
-              >{{ item.StyleText }}&nbsp;&nbsp;</span
+              >{{ item.StyleText }}&nbsp;&nbsp;&nbsp;</span
             >
-            <span class="text-sm"
+            <span class="text-base"
               ><span class="text-blue-600">笔画数:&nbsp;</span
-              >{{ item.NumberOfStrokes }}&nbsp;&nbsp;</span
-            >
-            <span class="text-sm"
-              ><span class="text-blue-600">控制点数:&nbsp;</span
-              >{{ item.NumberOfControlPoints }}&nbsp;&nbsp;</span
+              >{{ item.NumberOfStrokes }}&nbsp;</span
             >
           </p>
 
@@ -291,42 +378,6 @@
           </div>
         </div> -->
         <PlanetLoading></PlanetLoading>
-        <!-- <div
-          class="hidden-sm-and-up w-full h-full items-center leftdis flex flex-col justify-center"
-        >
-          <el-carousel
-            :autoplay="false"
-            indicator-position="outside"
-            style="width: 90%; margin-top: 1rem"
-            @change="onChange"
-          >
-            <el-carousel-item v-for="item in displayList" :key="item.key">
-              <img :src="item.src" style="width: 100%; height: 100%" />
-            </el-carousel-item>
-          </el-carousel>
-          <p class="font-medium tracking-wider mb-3" style="width: 90%">
-            {{ displayList[curIndex].text }}
-          </p>
-          <div style="width: 90%" class="pb-3">
-            <el-button
-              class="likebutton"
-              style="width: 100%"
-              v-if="!isLiked[curIndex]"
-              @click="likeit()"
-              ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
-              >喜欢</el-button
-            >
-            <el-button
-              class="liked"
-              type="text"
-              style="width: 100%"
-              v-if="isLiked[curIndex]"
-              @click="likeit()"
-              ><i class="el-icon-dianzan1 mr-1" style="font-size: 17px"></i
-              >喜欢</el-button
-            >
-          </div>
-        </div> -->
       </div>
     </div>
     <div
@@ -351,7 +402,7 @@
           @click="generatePic()"
           ><i class="el-icon-stars" style="font-size: 20px"></i
           ><span class="hidden-sm-and-down" style="margin-left: 10px"
-            >立即开始艺术创作</span
+            >再次开始艺术创作</span
           >
         </el-button>
       </div>
@@ -367,12 +418,12 @@
       </div>
       <div
         v-show="advancedSet2"
-        class="flex flex-col md:flex-row md:justify-between mt-5 settings"
+        class="flex flex-col md:flex-row md:justify-between mt-5 settings flex-wrap"
         :class="advanced2 == false ? 'off' : 'on'"
       >
         <div
           class="flex flex-row justify-between items-center indeSet"
-          style="width: 33%; padding-right: 20px"
+          style="width: 100%; padding-right: 20px"
         >
           <h3 class="tracking-wider">
             <el-tooltip effect="dark" placement="top-start">
@@ -390,7 +441,7 @@
         </div>
         <div
           class="flex flex-row justify-between items-center indeSet"
-          style="width: 33%; padding-right: 20px"
+          style="width: 100%; padding-right: 20px"
         >
           <h3 class="tracking-wider">
             <el-tooltip effect="dark" placement="top-start">
@@ -522,7 +573,7 @@ export default {
       advanced: false,
       advanced2: true,
       NumberOfStrokes: 96,
-      flexibility: 80,
+      NumberOfControlPoints: 4,
       advancedSet: false,
       advancedSet2: true,
       showViewer: false, // 显示查看器
@@ -530,6 +581,16 @@ export default {
       isLiked: [false, false, false, false],
       styleDiy: "sketch",
       srcList: [],
+      marks1: {
+        30: "30",
+        115: "115",
+        200: "200",
+      },
+      marks2: {
+        2: "2",
+        5: "5",
+        8: "8",
+      },
       styleList: [
         {
           value: "sketch",
@@ -980,20 +1041,20 @@ export default {
     height: 0px;
   }
   to {
-    height: 45px;
+    height: 160px;
   }
 }
 
 @keyframes shrink {
   from {
-    height: 45px;
+    height: 160px;
   }
   to {
     height: 0px;
   }
 }
 .on {
-  height: 45px;
+  height: 160px;
   animation: unfold 0.5s 1 ease-out;
 }
 .off {
@@ -1029,27 +1090,32 @@ export default {
   .indeSet {
     width: 100% !important;
     padding-right: 0px !important;
-    margin-top: 15px;
+    margin-top: 15px !important;
+  }
+  .indeSet:nth-child(1) {
+    width: 100% !important;
+    padding-right: 0px !important;
+    margin-top: 25px !important;
   }
   @keyframes unfold {
     from {
       height: 0px;
     }
     to {
-      height: 180px;
+      height: 380px;
     }
   }
 
   @keyframes shrink {
     from {
-      height: 180px;
+      height: 380px;
     }
     to {
       height: 0px;
     }
   }
   .on {
-    height: 180px;
+    height: 380px;
     animation: unfold 0.5s 1 ease-out;
   }
   .off {
