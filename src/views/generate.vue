@@ -5,7 +5,7 @@
       class="form_container md:w-10/12 w-11/12 md:px-8 py-6 px-4 flex flex-col items-center"
     >
       <div class="flex flex-row justify-between items-center mb-4 w-full">
-        <span class="tracking-wider text-xl font-medium"
+        <span class="tracking-wider text-lg font-medium"
           >请描述您的艺术构想</span
         >
         <span
@@ -152,7 +152,7 @@
           >立即开始艺术创作
         </el-button>
       </div>
-      <div class="w-full">
+      <div class="w-full mt-2">
         <p class="tracking-wider text-2xl font-medium exampleText">
           DiffSketch作品示例
         </p>
