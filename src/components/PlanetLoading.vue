@@ -13,7 +13,7 @@
         <span></span>
       </div>
     </div>
-    <p>...正在加急创作中...</p>
+    <p>...Loading...</p>
   </div>
 </template>
 

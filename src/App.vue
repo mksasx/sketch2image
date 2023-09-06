@@ -29,7 +29,7 @@
                   <el-dropdown-item
                     icon="el-icon-magic-stick"
                     @click.native="go()"
-                    >文本生成草图</el-dropdown-item
+                    >{{ lang3 == "中" ? "文本生成草图" : "Text2Sketch" }}</el-dropdown-item
                   >
                 </el-dropdown-menu>
               </el-dropdown>
@@ -63,12 +63,11 @@
               style="
                 float: right;
                 height: 35px;
-
                 border-right: 2px solid #888;
                 margin-top: 5px;
               "
             ></div>
-            <el-popover placement="bottom" width="250" trigger="click">
+            <!-- <el-popover placement="bottom" width="250" trigger="click">
               <div class="detail w-full">
                 <p>
                   <img
@@ -149,7 +148,42 @@
                   >
                 </div>
               </div>
-            </el-popover>
+            </el-popover> -->
+            <div
+              class="mr-1 flex justify-center items-center langdis"
+              style="
+                float: right;
+                height: 55px;
+                color: aliceblue;
+                margin-right: 20px;
+              "
+            >
+              <el-dropdown
+                @command="handleCommand"
+                class="dropdown2 hidden-md-and-down"
+                style="font-size: 18px; color: #fff"
+              >
+                <span class="el-dropdown-link">
+                  {{ lang }}<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="a">简体中文</el-dropdown-item>
+                  <el-dropdown-item command="b">English</el-dropdown-item>
+                </el-dropdown-menu> </el-dropdown
+              ><el-dropdown
+                @command="handleCommand"
+                class="dropdown2 hidden-md-and-up"
+                style="font-size: 18px; color: #fff"
+              >
+                <span class="el-dropdown-link">
+                  {{ lang2 }}<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="a">简体中文</el-dropdown-item>
+                  <el-dropdown-item command="b">English</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
             <el-menu-item index="/generate" class="hidden sm:inline">
               <span slot="title" class="hidden sm:inline"
                 ><i
@@ -160,7 +194,7 @@
                     margin-top: -1.5px;
                   "
                 ></i
-                >文本生成草图</span
+                >{{ lang3 == "中" ? "文本生成草图" : "Text2Sketch" }}</span
               ></el-menu-item
             >
           </el-menu>
@@ -192,7 +226,7 @@
                   <el-dropdown-item
                     icon="el-icon-magic-stick"
                     @click.native="go()"
-                    >文本生成草图</el-dropdown-item
+                    >{{ lang3 == "中" ? "文本生成草图" : "Text2Sketch" }}</el-dropdown-item
                   >
                 </el-dropdown-menu>
               </el-dropdown>
@@ -231,7 +265,7 @@
                 margin-top: 5px;
               "
             ></div>
-            <el-popover placement="bottom" width="250" trigger="click">
+            <!-- <el-popover placement="bottom" width="250" trigger="click">
               <div class="detail w-full">
                 <p>
                   <img
@@ -312,7 +346,42 @@
                   >
                 </div>
               </div>
-            </el-popover>
+            </el-popover> -->
+            <div
+              class="mr-1 flex justify-center items-center langdis"
+              style="
+                float: right;
+                height: 55px;
+                color: aliceblue;
+                margin-right: 20px;
+              "
+            >
+              <el-dropdown
+                @command="handleCommand"
+                class="dropdown2 hidden-md-and-down"
+                style="font-size: 18px; color: #000"
+              >
+                <span class="el-dropdown-link">
+                  {{ lang }}<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="a">简体中文</el-dropdown-item>
+                  <el-dropdown-item command="b">English</el-dropdown-item>
+                </el-dropdown-menu> </el-dropdown
+              ><el-dropdown
+                @command="handleCommand"
+                class="dropdown2 hidden-md-and-up"
+                style="font-size: 18px; color: #000"
+              >
+                <span class="el-dropdown-link">
+                  {{ lang2 }}<i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="a">简体中文</el-dropdown-item>
+                  <el-dropdown-item command="b">English</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </div>
             <el-menu-item index="/generate" class="hidden sm:inline">
               <span slot="title" class="hidden sm:inline"
                 ><i
@@ -323,7 +392,7 @@
                     margin-top: -1.5px;
                   "
                 ></i
-                >文本生成草图</span
+                >{{ lang3 == "中" ? "文本生成草图" : "Text2Sketch" }}</span
               ></el-menu-item
             >
           </el-menu>
@@ -354,10 +423,21 @@ export default {
     };
   },
   mounted() {
+    window.addEventListener("setItem", this.printLog);
+    // 在session中存lang
+    if (sessionStorage.getItem("lang")) {
+      this.lang = sessionStorage.getItem("lang");
+      this.lang2 = sessionStorage.getItem("lang2");
+    } else {
+      this.resetSetItem("lang", "简体中文");
+      this.resetSetItem("lang2", "中");
+      // sessionStorage.setItem("lang", "简体中文");
+      // sessionStorage.setItem("lang2", "中");
+    }
     this.getUpTime();
     // this.getip();
     // this.weekDay = this.getWeekDay();
-    this.getWeather();
+    // this.getWeather();
   },
   created() {
     this.getUpTime();
@@ -366,6 +446,7 @@ export default {
     if (this.times) {
       clearInterval(this.getTime);
     }
+    window.removeEventListener("setItem", this.printLog);
   },
   computed: {
     xians() {
@@ -379,9 +460,40 @@ export default {
     weekDay: "",
     weather: {},
     imgSrc: null,
+    lang: "简体中文",
+    lang2: "中",
+    lang3: "中",
+    options: [
+      {
+        value: "选项1",
+        label: "黄金糕",
+      },
+      {
+        value: "选项2",
+        label: "双皮奶",
+      },
+      {
+        value: "选项3",
+        label: "蚵仔煎",
+      },
+      {
+        value: "选项4",
+        label: "龙须面",
+      },
+      {
+        value: "选项5",
+        label: "北京烤鸭",
+      },
+    ],
+    value: "",
     // xians: !this.$route.path.includes("/main"),
   }),
   methods: {
+    printLog() {
+      // console.log("监听到数据变化");
+      this.lang3 = sessionStorage.getItem("lang2");
+      console.log(this.lang);
+    },
     go() {
       this.$router.push("/generate");
     },
@@ -402,7 +514,20 @@ export default {
         5: "星期五",
         6: "星期六",
       };
-      return week[weekNum] ? week[weekNum] : "日期错误";
+      var week_en = {
+        0: "Sunday",
+        1: "Monday",
+        2: "Tuesday",
+        3: "Wednesday",
+        4: "Thursday",
+        5: "Friday",
+        6: "Saturday",
+      };
+      if (this.lang3 == "中") {
+        return week[weekNum] ? week[weekNum] : "日期错误";
+      } else {
+        return week_en[weekNum] ? week_en[weekNum] : "日期错误";
+      }
     },
     getTime() {
       // 获取当前时间
@@ -441,78 +566,97 @@ export default {
         this.routerAlive = true;
       });
     },
-    getWeather() {
-      this.$axios({
-        method: "get",
-        url: "https://v0.yiketianqi.com/api",
-        params: {
-          appid: "61585449",
-          appsecret: "00PwPsx7",
-          version: "v61",
-        },
-      })
-        .then((res) => {
-          // console.log(res.data);
-          this.weather = res.data;
-          console.log(this.weather);
-          // 换图标
-          if (this.weather.wea_img == "xue") {
-            this.imgSrc = require("./assets/icons/snowy-5.svg");
-          }
-          if (this.weather.wea_img == "lei") {
-            this.imgSrc = require("./assets/icons/thunder.svg");
-          }
-          if (this.weather.wea_img == "yu") {
-            this.imgSrc = require("./assets/icons/rainy-6.svg");
-          }
-          if (this.weather.wea_img == "yun") {
-            this.imgSrc = require("./assets/icons/cloudy-day-3.svg");
-          }
-          if (this.weather.wea_img == "qing") {
-            this.imgSrc = require("./assets/icons/day.svg");
-          }
-          if (this.weather.wea_img == "yin") {
-            this.imgSrc = require("./assets/icons/cloudy.svg");
-          }
-          if (this.weather.wea_img == "bingbao") {
-            this.imgSrc = require("./assets/icons/icon-hail.svg");
-          }
-          if (this.weather.wea_img == "shachen") {
-            this.imgSrc = require("./assets/icons/icon-dust.svg");
-          }
-          this.$nextTick(() => {
-            var container = document.getElementById("container_aqi");
-            container.textContent = "空气质量" + "  " + this.weather.aqi.air;
-            if (this.weather.aqi.air >= 0 && this.weather.aqi.air <= 50) {
-              container.className = "container_aqi level1";
-            } else if (
-              this.weather.aqi.air >= 51 &&
-              this.weather.aqi.air <= 100
-            ) {
-              container.className = "container_aqi level2";
-            } else if (
-              this.weather.aqi.air >= 101 &&
-              this.weather.aqi.air <= 150
-            ) {
-              container.className = "container_aqi level3";
-            } else if (
-              this.weather.aqi.air >= 151 &&
-              this.weather.aqi.air <= 200
-            ) {
-              container.className = "container_aqi level4";
-            } else if (
-              this.weather.aqi.air >= 201 &&
-              this.weather.aqi.air <= 300
-            ) {
-              container.className = "container_aqi level5";
-            } else {
-              container.className = "container_aqi level6";
-            }
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    // getWeather() {
+    //   this.$axios({
+    //     method: "get",
+    //     url: "https://v0.yiketianqi.com/api",
+    //     params: {
+    //       appid: "61585449",
+    //       appsecret: "00PwPsx7",
+    //       version: "v61",
+    //     },
+    //   })
+    //     .then((res) => {
+    //       // console.log(res.data);
+    //       this.weather = res.data;
+    //       console.log(this.weather);
+    //       // 换图标
+    //       if (this.weather.wea_img == "xue") {
+    //         this.imgSrc = require("./assets/icons/snowy-5.svg");
+    //       }
+    //       if (this.weather.wea_img == "lei") {
+    //         this.imgSrc = require("./assets/icons/thunder.svg");
+    //       }
+    //       if (this.weather.wea_img == "yu") {
+    //         this.imgSrc = require("./assets/icons/rainy-6.svg");
+    //       }
+    //       if (this.weather.wea_img == "yun") {
+    //         this.imgSrc = require("./assets/icons/cloudy-day-3.svg");
+    //       }
+    //       if (this.weather.wea_img == "qing") {
+    //         this.imgSrc = require("./assets/icons/day.svg");
+    //       }
+    //       if (this.weather.wea_img == "yin") {
+    //         this.imgSrc = require("./assets/icons/cloudy.svg");
+    //       }
+    //       if (this.weather.wea_img == "bingbao") {
+    //         this.imgSrc = require("./assets/icons/icon-hail.svg");
+    //       }
+    //       if (this.weather.wea_img == "shachen") {
+    //         this.imgSrc = require("./assets/icons/icon-dust.svg");
+    //       }
+    //       this.$nextTick(() => {
+    //         var container = document.getElementById("container_aqi");
+    //         container.textContent = "空气质量" + "  " + this.weather.aqi.air;
+    //         if (this.weather.aqi.air >= 0 && this.weather.aqi.air <= 50) {
+    //           container.className = "container_aqi level1";
+    //         } else if (
+    //           this.weather.aqi.air >= 51 &&
+    //           this.weather.aqi.air <= 100
+    //         ) {
+    //           container.className = "container_aqi level2";
+    //         } else if (
+    //           this.weather.aqi.air >= 101 &&
+    //           this.weather.aqi.air <= 150
+    //         ) {
+    //           container.className = "container_aqi level3";
+    //         } else if (
+    //           this.weather.aqi.air >= 151 &&
+    //           this.weather.aqi.air <= 200
+    //         ) {
+    //           container.className = "container_aqi level4";
+    //         } else if (
+    //           this.weather.aqi.air >= 201 &&
+    //           this.weather.aqi.air <= 300
+    //         ) {
+    //           container.className = "container_aqi level5";
+    //         } else {
+    //           container.className = "container_aqi level6";
+    //         }
+    //       });
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     });
+    // },
+    handleCommand(command) {
+      if (command == "a") {
+        this.lang = "简体中文";
+        this.lang2 = "中";
+        this.resetSetItem("lang", "简体中文");
+        this.resetSetItem("lang2", "中");
+        // sessionStorage.setItem("lang", "简体中文");
+        // sessionStorage.setItem("lang2", "中");
+        // window.reload();
+      } else {
+        this.lang = "English";
+        this.lang2 = "En";
+        // sessionStorage.setItem("lang", "English");
+        // sessionStorage.setItem("lang2", "En");
+        this.resetSetItem("lang", "English");
+        this.resetSetItem("lang2", "En");
+        // window.reload();
+      }
     },
   },
 };
@@ -678,7 +822,7 @@ body {
   background-color: black;
   color: white;
 }
-.el-dropdown {
+.dropdown {
   display: none;
 }
 :deep(.el-dropdown-menu__item i) {
@@ -792,6 +936,12 @@ body {
   .el-dropdown {
     display: block;
     margin-left: 5px;
+  }
+  .dropdown2 {
+    font-size: 15px !important;
+  }
+  .langdis {
+    height: 45px !important;
   }
 }
 

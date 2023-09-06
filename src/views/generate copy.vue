@@ -4,7 +4,10 @@
       v-if="!isProcessing && !showResults"
       class="form_container md:w-10/12 w-11/12 md:px-8 py-6 px-4 flex flex-col items-center"
     >
-      <div class="flex flex-row justify-between items-center mb-4 w-full">
+      <div
+        class="flex flex-row justify-between items-center mb-4 w-full"
+        style="word-break: break-all"
+      >
         <span v-if="lang == '中'" class="tracking-wider text-sm font-medium"
           >这是一个基于<a
             target="\_blank"
@@ -14,15 +17,7 @@
             Diffusion Models</a
           >这篇论文的在线Demo。使用DiffSketcher，您可以通过输入自然语言的方式来创建矢量化手绘草图，并且支持不同风格的切换以及个性化参数设置。请输入生动、较强描述性的200字符以内的英文文本内容，大约需要5分钟来完成1000轮迭代。
         </span>
-        <span
-          v-else
-          class="tracking-wider text-sm font-medium"
-          style="
-            word-break: keep-all;
-            hyphens: auto;
-            -ms-hyphens: auto;
-            -moz-hyphens: auto;
-          "
+        <span v-else class="tracking-wider text-sm font-medium"
           >A demo for
           <a
             target="\_blank"
@@ -96,7 +91,7 @@
           <el-slider
             class="hidden-sm-and-down"
             v-model="NumberOfStrokes"
-            :style="[{ width: lang == '中' ? '85%' : '80%' }]"
+            style="width: 85%"
             show-input
             :min="30"
             :max="200"
@@ -123,7 +118,7 @@
                 slot="content"
                 style="
                   white-space: pre-wrap;
-                  word-break: keep-all;
+                  word-break: break-all;
                   width: 250px;
                 "
               >
@@ -134,7 +129,9 @@
                 }}
               </div>
               <i class="el-icon-info mr-1"></i> </el-tooltip
-            >{{ lang == "中" ? "自定义迭代轮数" : "Number of iteration" }}
+            >{{
+              lang == "中" ? "自定义迭代轮数" : "Number of iteration rounds"
+            }}
           </h3>
           <el-slider
             class="hidden-sm-and-down"
@@ -184,7 +181,7 @@
                 slot="content"
                 style="
                   white-space: pre-wrap;
-                  word-break: keep-all;
+                  word-break: break-all;
                   width: 250px;
                 "
               >
@@ -226,7 +223,7 @@
                 slot="content"
                 style="
                   white-space: pre-wrap;
-                  word-break: keep-all;
+                  word-break: break-all;
                   width: 250px;
                 "
               >
@@ -259,7 +256,7 @@
                 slot="content"
                 style="
                   white-space: pre-wrap;
-                  word-break: keep-all;
+                  word-break: break-all;
                   width: 250px;
                 "
               >
@@ -380,7 +377,7 @@
             style="
               width: 90%;
 
-              word-break: keep-all;
+              word-break: break-all;
               margin-bottom: 1.25rem;
             "
           >
@@ -455,7 +452,7 @@
         :current-page.sync="currentPage"
         :page-size="pageSize"
         @current-change="handleCurrentChange"
-        layout="prev, pager, next"
+        layout="prev, pager, next, jumper"
         :total="this.displayList.length"
       />
     </div>
@@ -533,20 +530,7 @@
       class="form_container_process md:w-10/12 w-11/12 md:px-8 pt-6 pb-4 px-4 flex flex-col"
     >
       <div class="mb-3">
-        <el-page-header
-          v-if="lang == '中'"
-          @back="goBack()"
-          title="返回"
-          content="生成结果"
-        >
-        </el-page-header>
-        <el-page-header
-          v-else
-          @back="goBack()"
-          title="Return"
-          content="Results"
-        >
-        </el-page-header>
+        <el-page-header @back="goBack()" content="生成结果"> </el-page-header>
       </div>
       <div class="flex flex-row justify-between">
         <el-input
@@ -606,7 +590,7 @@
           <el-slider
             class="hidden-sm-and-down"
             v-model="NumberOfStrokes"
-            :style="[{ width: lang == '中' ? '85%' : '80%' }]"
+            style="width: 85%"
             show-input
             :min="30"
             :max="200"
@@ -632,7 +616,7 @@
                 slot="content"
                 style="
                   white-space: pre-wrap;
-                  word-break: keep-all;
+                  word-break: break-all;
                   width: 250px;
                 "
               >
@@ -643,7 +627,9 @@
                 }}
               </div>
               <i class="el-icon-info mr-1"></i> </el-tooltip
-            >{{ lang == "中" ? "自定义迭代轮数" : "Number of iteration" }}
+            >{{
+              lang == "中" ? "自定义迭代轮数" : "Number of iteration rounds"
+            }}
           </h3>
           <el-slider
             class="hidden-sm-and-down"
@@ -693,7 +679,7 @@
                 slot="content"
                 style="
                   white-space: pre-wrap;
-                  word-break: keep-all;
+                  word-break: break-all;
                   width: 250px;
                 "
               >
@@ -735,7 +721,7 @@
                 slot="content"
                 style="
                   white-space: pre-wrap;
-                  word-break: keep-all;
+                  word-break: break-all;
                   width: 250px;
                 "
               >
@@ -746,7 +732,7 @@
                 }}
               </div>
               <i class="el-icon-info mr-1"></i> </el-tooltip
-            >{{ lang == "中" ? "Clip损失强度" : "Clip Loss" }}
+            >{{ lang == "中" ? "Clip损失强度" : "Clip Loss Strength" }}
           </h3>
 
           <el-input-number
@@ -755,7 +741,7 @@
             :step="0.1"
             :min="0.0"
             :max="1.0"
-            :style="[{ width: lang == '中' ? '55%' : '45%' }]"
+            style="width: 55%"
           ></el-input-number>
         </div>
         <div
@@ -768,7 +754,7 @@
                 slot="content"
                 style="
                   white-space: pre-wrap;
-                  word-break: keep-all;
+                  word-break: break-all;
                   width: 250px;
                 "
               >
@@ -779,7 +765,7 @@
                 }}
               </div>
               <i class="el-icon-info mr-1"></i> </el-tooltip
-            >{{ lang == "中" ? "SDS损失强度" : "SDS Loss" }}
+            >{{ lang == "中" ? "SDS损失强度" : "SDS Loss Strength" }}
           </h3>
           <el-input-number
             v-model="SDSLoss"
@@ -787,7 +773,7 @@
             :step="0.1"
             :min="0.0"
             :max="2.0"
-            :style="[{ width: lang == '中' ? '55%' : '45%' }]"
+            style="width: 55%"
           ></el-input-number>
           <!-- <el-input
             v-model="flexibility"
@@ -906,7 +892,12 @@
 
           <div
             class="font-medium tracking-wider"
-            style="width: 90%; word-break: keep-all; margin-bottom: 1.25rem"
+            style="
+              width: 90%;
+
+              word-break: break-all;
+              margin-bottom: 1.25rem;
+            "
           >
             <p class="mb-1.5">
               <span class=" "
@@ -975,11 +966,11 @@
         </div>
       </div>
       <el-pagination
-        style="margin: 15px auto 0 auto"
+        class="mt-2"
         :current-page.sync="currentPage"
         :page-size="pageSize"
         @current-change="handleCurrentChange"
-        layout="prev, pager, next"
+        layout="prev, pager, next, jumper"
         :total="this.displayList.length"
       />
     </div>
@@ -1343,10 +1334,6 @@ export default {
     generate2() {
       // 每5秒发送一次请求,如果返回的结果是图片，那么就停止
       let id;
-      this.curIter = 0;
-      this.flag1 = false;
-      this.iteration.src = null;
-      this.iteration.srcList = null;
       id = setInterval(() => {
         this.$axios({
           method: "get",
